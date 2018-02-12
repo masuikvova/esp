@@ -4,14 +4,12 @@
 #include <ESP8266HTTPClient.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include <RtcDS1307.h>
 #include "ArduinoJson.h"
 #include "FileReading.hpp"
 #include "SetupWiFi.hpp"
 #include "API.hpp"
 #include "RTCAPI.hpp"
 
-RtcDS1307<TwoWire> Rtc(Wire);
 
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 bool send = false;
@@ -28,25 +26,6 @@ void setup() {
   setupRTC();
   setupTimer();
   setupAPI();
-}
-
-void setupRTC() {
-  Rtc.Begin();
-  RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-  if (!Rtc.IsDateTimeValid()) {
-    Serial.println("RTC lost confidence in the DateTime!");
-    Rtc.SetDateTime(compiled);
-  }
-  if (!Rtc.GetIsRunning()) {
-    Serial.println("RTC was not actively running, starting now");
-    Rtc.SetIsRunning(true);
-  }
-  RtcDateTime now = Rtc.GetDateTime();
-  if (now < compiled) {
-    Serial.println("RTC is older than compile time!  (Updating DateTime)");
-    Rtc.SetDateTime(compiled);
-  }
-  Rtc.SetSquareWavePin(DS1307SquareWaveOut_Low);
 }
 
 void setupTimer() {
