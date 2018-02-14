@@ -1,23 +1,18 @@
-#include <RtcDS1307.h>
-RtcDS1307<TwoWire> Rtc(Wire);
-
+#include <RTClib.h>
+RTC_DS1307 rtc;
 void setupRTC();
+void setupDataTime(int _year, int _month, int _day, int _hour, int _minutes);
 
 void setupRTC() {
-  Rtc.Begin();
-  RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-  if (!Rtc.IsDateTimeValid()) {
-    Serial.println("RTC lost confidence in the DateTime!");
-    Rtc.SetDateTime(compiled);
+  rtc.begin();
+ if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running!");
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(__DATE__, __TIME__)); // Use ONCE then comment out and reload
   }
-  if (!Rtc.GetIsRunning()) {
-    Serial.println("RTC was not actively running, starting now");
-    Rtc.SetIsRunning(true);
-  }
-  RtcDateTime now = Rtc.GetDateTime();
-  if (now < compiled) {
-    Serial.println("RTC is older than compile time!  (Updating DateTime)");
-    Rtc.SetDateTime(compiled);
-  }
-  Rtc.SetSquareWavePin(DS1307SquareWaveOut_Low);
 }
+
+void setupDataTime(int _year, int _month, int _day, int _hour, int _minutes) {
+  rtc.adjust(DateTime(_year, _month, _day, _hour, _minutes, 0)); // Set time manually ONCE as above
+}
+

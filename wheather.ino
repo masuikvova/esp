@@ -4,11 +4,11 @@
 #include <ESP8266HTTPClient.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include "RTCAPI.hpp"
 #include "ArduinoJson.h"
 #include "FileReading.hpp"
 #include "SetupWiFi.hpp"
 #include "API.hpp"
-#include "RTCAPI.hpp"
 
 
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
@@ -17,15 +17,15 @@ bool loadData = true;
 int timerCount = 0;
 
 void setup() {
-  pinMode(D0, INPUT);
-  attachInterrupt(digitalPinToInterrupt(D5), sendDataToFirebase, CHANGE);
-  lcd.init();
-  lcd.setBacklight(50);
   Serial.begin(9600);
+  pinMode(D0, INPUT);
+  attachInterrupt(digitalPinToInterrupt(D5), sendDataToFirebase, CHANGE); 
   setupWiFi();
   setupRTC();
   setupTimer();
   setupAPI();
+  lcd.init();
+  lcd.setBacklight(50);
 }
 
 void setupTimer() {
@@ -53,8 +53,7 @@ void loop() {
 void timerTriger() {
   getTime();
   timerCount++;
-  if (timerCount == 1200) {
-    // update date each 2 minutes
+  if (timerCount == 1200) {// update date each 2 minutes
     loadData = true;
     timerCount = 0;
   }
@@ -62,32 +61,29 @@ void timerTriger() {
 }
 
 void getTime() {
-  if (!Rtc.IsDateTimeValid()) {
-    Serial.println("RTC lost confidence in the DateTime!");
-  }
-  RtcDateTime now = Rtc.GetDateTime();
+  DateTime now = rtc.now();
   char datestring[20];
   snprintf_P(datestring,
              20,
              PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
-             now.Month(),
-             now.Day(),
-             now.Year(),
-             now.Hour(),
-             now.Minute(),
-             now.Second() );
+             now.month(),
+             now.day(),
+             now.year(),
+             now.hour(),
+             now.minute(),
+             now.second() );
   Serial.println(datestring);
 
   lcd.setCursor(8, 1);
-  if (now.Hour() < 10) {
+  if (now.hour() < 10) {
     lcd.print("0");
   }
-  lcd.print(now.Hour());
+  lcd.print(now.hour());
   lcd.print(":");
-  if (now.Minute() < 10) {
+  if (now.minute() < 10) {
     lcd.print("0");
   }
-  lcd.print(now.Minute());
+  lcd.print(now.minute());
 }
 
 void sendDataToFirebase() {
