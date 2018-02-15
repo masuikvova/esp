@@ -10,7 +10,6 @@
 #include "SetupWiFi.hpp"
 #include "API.hpp"
 
-
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 bool send = false;
 bool loadData = true;
@@ -149,6 +148,7 @@ void getExchangeRate() {
       JsonArray& root = jsonBuffer.parseArray(body);
       JsonObject& obj = root[0];
       double rate  =  obj["sale"];
+      rate_= rate;
       char str_temp[6];
       dtostrf(rate, 4, 2, str_temp);
       lcd.setCursor(0, 1);
@@ -173,9 +173,12 @@ void getWeather() {
       return;
     }
     String main = root["weather"][0]["main"].as<String>();
+    main_= main;
     double temp  =  root["main"]["temp"];
     double tempC = temp - 273.0;
+    tempC_  = tempC;
     double presure = root["main"]["pressure"];
+    presure_= presure;
     // Print values.
     Serial.println(main);
     Serial.print("Temperature ");

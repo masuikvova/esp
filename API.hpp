@@ -1,5 +1,9 @@
 #include <ESP8266WebServer.h>
 ESP8266WebServer server(80);
+double rate_ = 0;
+double tempC_ = 0;
+double presure_ = 0;
+String main_ = "";
 
 void setupAPI();
 void handleAPI();
@@ -7,12 +11,15 @@ void getWiFiInfo();
 void clearWifiSetting();
 void setTime();
 void handleNotFound();
+void welcomPage();
 
 void setupAPI() {
   server.begin();
   server.on("/wifi_setup", getWiFiInfo);
   server.on("/clear_wifi_setting", clearWifiSetting);
   server.on("/set_time", setTime);
+  server.on("/", welcomPage);
+  server.on("/home", welcomPage);
   server.onNotFound(handleNotFound);
 }
 
@@ -34,6 +41,32 @@ void clearWifiSetting() {
   clearWifiSettingsFile();
   delay(1000);
   ESP.restart();
+}
+
+void welcomPage() {
+  char temp[400];
+  DateTime now = rtc.now();
+  snprintf ( temp, 400,
+             "<html>\
+  <head>\
+    <meta http-equiv='refresh' content='5'/>\
+    <title>ESP8266 Clock</title>\
+    <style>\
+      body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
+    </style>\
+  </head>\
+  <body>\
+    <h1>ESP8266 Clock</h1>\
+    <p>Time: %02d:%02d:%02d</p>\
+    <p>Exchange rate $: %2.2f</p>\
+    <p>Weather : %s</p>\
+    <p>Temperature : %2.2f C</p>\
+    <p>Presure : %2.2f</p>\
+  </body>\
+</html>",
+
+             now.hour(), now.minute(), now.second(), rate_, main_.c_str(), tempC_, presure_);
+  server.send ( 200, "text/html", temp );
 }
 
 void setTime() {

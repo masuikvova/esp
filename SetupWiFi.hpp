@@ -5,9 +5,9 @@ String ssid;
 String password;
 byte tries = 11;
 
-IPAddress ip(192,168,0,128);  //Node static IP
-IPAddress gateway(192,168,0,1);
-IPAddress subnet(255,255,255,0);
+IPAddress ip(192, 168, 0, 120);
+IPAddress gateway(192, 168, 0, 1);
+IPAddress subnet(255, 255, 255, 0);
 
 void setupWiFi();
 void startAccessPoint();
@@ -24,9 +24,9 @@ void startAccessPoint() {
 }
 
 void connectToWiFi() {
-  WiFi.mode(WIFI_STA); 
+  WiFi.mode(WIFI_STA);
+  WiFi.config(ip, gateway, subnet, gateway);
   WiFi.begin(ssid.c_str(), password.c_str());
-  //WiFi.config(ip, gateway, subnet);
   while (--tries && WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(1000);
@@ -63,7 +63,7 @@ void setupWiFi() {
   connectToWiFi();
 }
 
-void saveWiFiSettings(String ssid, String pass){
+void saveWiFiSettings(String ssid, String pass) {
   String data = "{";
   data = data + "\"ssid\": \"" + ssid + "\",";
   data = data + "\"password\": \"" + pass + "\"";
@@ -73,7 +73,7 @@ void saveWiFiSettings(String ssid, String pass){
 }
 
 
-void clearWifiSettingsFile(){
+void clearWifiSettingsFile() {
   fileRemove(setting_file);
 }
 
