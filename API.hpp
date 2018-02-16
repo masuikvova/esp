@@ -5,6 +5,12 @@ double tempC_ = 0;
 double presure_ = 0;
 String main_ = "";
 
+//Alarm variable;
+int alarmHour = 0;
+int alarmMinutes = 0;
+bool isAlarmOn = false;
+String alarm_setting = "alarm_setting_file";
+
 void setupAPI();
 void handleAPI();
 void getWiFiInfo();
@@ -20,6 +26,9 @@ void setupAPI() {
   server.on("/set_time", setTime);
   server.on("/", welcomPage);
   server.on("/home", welcomPage);
+  server.on("/set_alarm", setAlarm);
+  server.on("/clear_alarm", clearAlarm);
+  server.on("/get_alarm", getAlarmValues);
   server.onNotFound(handleNotFound);
 }
 
@@ -78,6 +87,39 @@ void setTime() {
   setupDataTime(_year.toInt(), _month.toInt(), _day.toInt(), _hour.toInt(), _minutes.toInt());
   server.send(200, "text/plain", "OK\r\n");
   Serial.println("set time");
+}
+// ALARM`S method
+void setAlarm(){
+  String _hour = server.arg("hour");
+  String _minutes = server.arg("minutes");
+  isAlarmOn = true;
+  alarmHour = _hour.toInt();
+  alarmMinutes = _minutes.toInt();
+  String data = "{";
+  data = data + "\"hour\": \"" + alarmHour + "\",";
+  data = data + "\"minutes\": \"" + alarmMinutes + "\"";
+  data = data + "\"isOn\": \"" + isAlarmOn + "\"";
+  data = data + "}\n";
+  fileWrite(alarm_setting, data);
+  server.send(200, "text/plain", "OK\r\n");
+  Serial.println("alarm ok");
+}
+
+void getAlarmValues(){
+  String data = "{";
+  data = data + "\"hour\": \"" + alarmHour + "\",";
+  data = data + "\"minutes\": \"" + alarmMinutes + "\"";
+  data = data + "\"isOn\": \"" + isAlarmOn + "\"";
+  data = data + "}\n";
+  server.send(200, "text/plain", data);
+  Serial.println("alarm ok");
+}
+
+void clearAlarm(){
+  server.send(200, "text/plain", "OK\r\n");
+  clearAlarmSetting();
+  isAlarmOn= false;
+  Serial.println("clearAlarm");
 }
 
 void handleNotFound() {
