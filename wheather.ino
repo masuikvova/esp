@@ -13,6 +13,7 @@
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 bool send = false;
 bool loadData = true;
+bool beep = false;
 int timerCount = 0;
 
 void setup() {
@@ -23,6 +24,7 @@ void setup() {
   setupRTC();
   setupTimer();
   setupAPI();
+  setupAlarm();
   lcd.init();
   lcd.setBacklight(50);
 }
@@ -35,6 +37,28 @@ void setupTimer() {
   interrupts();
 }
 
+void setupAlarm(){
+  String alarm = fileRead(alarm_setting_file);
+  if (alarm != "FILE ERROR") {
+    Serial.println(alarm);
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& root = jsonBuffer.parseObject(alarm);
+    if (!root.success()) {
+      Serial.println("error parse alarm setting");
+      isAlarmOn = false;
+      return;
+    }
+    alarmHour = root["hour"];
+    alarmMinutes =  root["minutes"];
+    isAlarmOn = root["isOn"];
+    Serial.println("read alarm settings ok");
+  } else {
+    Serial.println("read alarm settings error");
+    isAlarmOn = false;
+    return;
+  }
+}
+
 void loop() {
   handleAPI();
   if (loadData && WiFi.status() == WL_CONNECTED) {
@@ -42,6 +66,11 @@ void loop() {
     getExchangeRate();
     loadData = false;
   }
+  
+  if(beep){
+    beepTone();
+  }
+  
   // if(send){
   //sendFirebase("Alarm", "Alarm message", "alarm");
   // TODO setup alarm when outer device will find
@@ -83,6 +112,16 @@ void getTime() {
     lcd.print("0");
   }
   lcd.print(now.minute());
+  if(isAlarmOn){
+    if(alarmHour == now.hour() &&  alarmMinutes == now.minute() && (now.second()==0 || now.second() ==1 )){
+      beep = true;
+    }
+  }
+}
+
+void beepTone(){
+  beep = false;
+  //TODO implement beep function;
 }
 
 void sendDataToFirebase() {
