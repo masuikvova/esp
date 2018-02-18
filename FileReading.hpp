@@ -61,7 +61,7 @@ String fileRead(String name){
     
     // this is going to get the number of bytes in the file and give us the value in an integer
     int fileSize = file.size();
-    int chunkSize=1024;
+    int chunkSize=128;
     //This is a character array to store a chunk of the file.
     //We'll store 1024 characters at a time
     char buf[chunkSize];

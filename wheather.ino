@@ -10,15 +10,16 @@
 #include "SetupWiFi.hpp"
 #include "API.hpp"
 
+#define tonePin D6
+
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 bool send = false;
 bool loadData = true;
-bool beep = false;
+bool beepRun = false;
 int timerCount = 0;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(D0, INPUT);
   attachInterrupt(digitalPinToInterrupt(D5), sendDataToFirebase, CHANGE); 
   setupWiFi();
   setupRTC();
@@ -38,7 +39,9 @@ void setupTimer() {
 }
 
 void setupAlarm(){
-  String alarm = fileRead(alarm_setting_file);
+  pinMode(D4, OUTPUT);
+  String alarm = fileRead(alarm_setting);
+  
   if (alarm != "FILE ERROR") {
     Serial.println(alarm);
     DynamicJsonBuffer jsonBuffer;
@@ -67,7 +70,7 @@ void loop() {
     loadData = false;
   }
   
-  if(beep){
+  if(beepRun){
     beepTone();
   }
   
@@ -113,14 +116,150 @@ void getTime() {
   }
   lcd.print(now.minute());
   if(isAlarmOn){
-    if(alarmHour == now.hour() &&  alarmMinutes == now.minute() && (now.second()==0 || now.second() ==1 )){
-      beep = true;
+    if(alarmHour == now.hour() &&  alarmMinutes == now.minute() && now.second()==0){
+      beepRun = true;
     }
   }
 }
 
 void beepTone(){
-  beep = false;
+  Serial.println("beep beep");
+  tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 493, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 415, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 369, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(260.4165625);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+    delay(86.8055208333);
+    tone(tonePin, 311, 78.12496875);
+    delay(86.8055208333);
+  noTone(tonePin);
+  beepRun = false;
   //TODO implement beep function;
 }
 
