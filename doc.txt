@@ -1,0 +1,70 @@
+Clock API doc
+
+Base url:  http://192.168.0.120
+
+1. Setup wifi
+	POST
+	/wifi_setup
+
+Param		Type	Description
+ssid		String	WiFi point SSID
+password	String	WiFi point password
+
+Response:
+{"success":true, "error":"no"}
+----------------------------------------------------------------------------------------------------------------
+
+2. Clear wifi settings
+	GET
+	/clear_wifi_setting
+Response:
+{"success":true, "error":"no"}
+----------------------------------------------------------------------------------------------------------------
+
+3. Set time
+	POST
+	/set_time
+
+Param	Type	Description
+year	Int	year. 2018
+month	int	month 1 - 12
+day	int	day 1-31
+hour	int	0 - 23
+minutes	int	0-59
+
+Response:
+{"success":true, "error":"no"}
+----------------------------------------------------------------------------------------------------------------
+4. Set alarm
+	POST
+	/set_alarm
+
+Param	Type	Description
+hour	int	0 - 23
+minutes	int	0-59
+
+Response:
+{"success":true, "error":"no"}
+----------------------------------------------------------------------------------------------------------------
+
+5. Clear alarm
+	GET
+	/clear_alarm
+Response:
+{"success":true, "error":"no"}
+----------------------------------------------------------------------------------------------------------------
+
+
+5. Get alarm
+	GET
+	/get_alarm
+Response:
+{"success":true, "error":"no", "hour":12, "minutes":30, "isOn":true}
+----------------------------------------------------------------------------------------------------------------
+
+5. Get alarm
+	GET
+	/get_all_data
+Response:
+{"success":true, "error":"NO","hour": "17","minutes": "2","second": "47","buy_rate": "26.35","weather": "Mist","temperature": "6.81","presure": "1009.00"}
+----------------------------------------------------------------------------------------------------------------

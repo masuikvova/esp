@@ -27,7 +27,7 @@ void setup() {
   setupAPI();
   setupAlarm();
   lcd.init();
-  lcd.setBacklight(50);
+  lcd.backlight();
 }
 
 void setupTimer() {
@@ -105,6 +105,14 @@ void getTime() {
              now.second() );
   Serial.println(datestring);
 
+  // lcd back light logic. Light is off from 00:00 to 07:00
+  if (now.hour() >=0 && now.hour() <7) {
+    lcd.noBacklight();
+  }
+  else{
+    lcd.backlight();
+  }
+  
   lcd.setCursor(8, 1);
   if (now.hour() < 10) {
     lcd.print("0");

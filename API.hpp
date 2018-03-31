@@ -21,6 +21,7 @@ void welcomPage();
 void setAlarm();
 void clearAlarm();
 void getAlarmValues();
+void getAllData();
 
 void setupAPI() {
   server.begin();
@@ -32,6 +33,7 @@ void setupAPI() {
   server.on("/set_alarm", setAlarm);
   server.on("/clear_alarm", clearAlarm);
   server.on("/get_alarm", getAlarmValues);
+  server.on("/get_all_data", getAllData);
   server.onNotFound(handleNotFound);
 }
 
@@ -43,7 +45,7 @@ void getWiFiInfo() {
   String ssid = server.arg("ssid");
   String pass = server.arg("password");
   saveWiFiSettings(ssid, pass);
-  server.send(200, "text/plain", "OK\r\n");
+  server.send(200, "text/plain", "{\"success\":true, \"error\":\"NO\"}");
   Serial.println("Save wifi settings");
   delay(2000);
   ESP.restart();
@@ -51,6 +53,7 @@ void getWiFiInfo() {
 
 void clearWifiSetting() {
   clearWifiSettingsFile();
+  server.send(200, "text/plain", "{\"success\":true, \"error\":\"NO\"}");
   delay(1000);
   ESP.restart();
 }
@@ -75,10 +78,23 @@ void welcomPage() {
     <p>Temperature : %2.2f C</p>\
     <p>Presure : %2.2f</p>\
   </body>\
-</html>",
-
-             now.hour(), now.minute(), now.second(), rate_, main_.c_str(), tempC_, presure_);
+</html>",now.hour(), now.minute(), now.second(), rate_, main_.c_str(), tempC_, presure_);
   server.send ( 200, "text/html", temp );
+}
+
+void getAllData(){
+  DateTime now = rtc.now();
+  String data = "{\"success\":true, \"error\":\"NO\",";
+  data = data + "\"hour\": \"" + now.hour() + "\",";
+  data = data + "\"minutes\": \"" + now.minute() + "\",";
+  data = data + "\"second\": \"" + now.second() + "\",";
+  data = data + "\"buy_rate\": \"" + rate_ + "\",";
+  data = data + "\"weather\": \"" + main_.c_str() + "\",";
+  data = data + "\"temperature\": \"" + tempC_ + "\",";
+  data = data + "\"presure\": \"" + presure_ + "\"";
+  data = data + "}\n";
+  server.send(200, "text/plain", data);
+  Serial.println("get all_data ok");
 }
 
 void setTime() {
@@ -88,7 +104,7 @@ void setTime() {
   String _hour = server.arg("hour");
   String _minutes = server.arg("minutes");
   setupDataTime(_year.toInt(), _month.toInt(), _day.toInt(), _hour.toInt(), _minutes.toInt());
-  server.send(200, "text/plain", "OK\r\n");
+  server.send(200, "text/plain", "{\"success\":true, \"error\":\"NO\"}");
   Serial.println("set time");
 }
 // ALARM`S method
@@ -104,12 +120,12 @@ void setAlarm() {
   data = data + "\"isOn\": \"" + isAlarmOn + "\"";
   data = data + "}\n\n";
   fileWrite(alarm_setting, data);
-  server.send(200, "text/plain", "OK\r\n");
+  server.send(200, "text/plain", "{\"success\":true, \"error\":\"NO\"}");
   Serial.println("alarm ok");
 }
 
 void getAlarmValues() {
-  String data = "{";
+  String data = "{\"success\":true, \"error\":\"NO\",";
   data = data + "\"hour\": \"" + alarmHour + "\",";
   data = data + "\"minutes\": \"" + alarmMinutes + "\",";
   data = data + "\"isOn\": \"" + isAlarmOn + "\"";
@@ -119,7 +135,7 @@ void getAlarmValues() {
 }
 
 void clearAlarm() {
-  server.send(200, "text/plain", "OK\r\n");
+  server.send(200, "text/plain", "{\"success\":true, \"error\":\"NO\"}");
   fileRemove(alarm_setting);
   alarmHour = 0;
   alarmMinutes = 0;
